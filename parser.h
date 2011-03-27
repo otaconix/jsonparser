@@ -12,10 +12,12 @@ void leave();
 #define leave(x) ;
 #endif //   DEBUG
 
+bool expecti(wchar_t c);
 bool expect(wchar_t c);
 bool noexpect(wchar_t *c);
 extern wchar_t next;
 void error(char *);
+void scani();
 void scan();
 
 #endif /* __PARSER_H */

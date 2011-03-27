@@ -48,7 +48,7 @@ bool json() {
 
     if (object() || array());
 
-    if (!expect(WEOF))
+    if (!expecti(WEOF))
         error("json() expected EOF");
 
     success = true;
@@ -63,15 +63,15 @@ bool json() {
 bool object() {
     bool success = false;
     enter("object");
-    if (expect('{')) {
+    if (expecti('{')) {
         if (pair()) {
-            while (expect(',')) {
+            while (expecti(',')) {
                 if (!pair()) {
                     error("object() expected another pair after ','");
                 }
             }
         }
-        if (expect('}')) {
+        if (expecti('}')) {
             success = true;
         } else {
             error("object() expected a pair or '}' to end object definition");
@@ -89,7 +89,7 @@ bool pair() {
     int success = false;
     enter("pair");
     if (string()) {
-        if (expect(':')) {
+        if (expecti(':')) {
             if (value()) {
                     success = true;
             } else {
@@ -110,15 +110,15 @@ bool pair() {
 bool array() {
     bool success = false;
     enter("array");
-    if (expect('[')) {
+    if (expecti('[')) {
         if (value()) {
-            while (expect(',')) {
+            while (expecti(',')) {
                 if (!value()) {
                     error("array() expected another value after ','");
                 }
             }
         }
-        if (expect(']')) {
+        if (expecti(']')) {
             success = true;
         } else {
             error("array() expected a ']' to end array");
@@ -157,9 +157,9 @@ bool value() {
 bool string() {
     bool success = false;
     enter("string");
-    if (expect('"')) {
+    if (expecti('"')) {
         while (nodquoteslash() || escaped());
-        if (expect('\"')) {
+        if (expecti('\"')) {
             success = true;
         } else {
             error("string() expected a '\"' to end a string");
@@ -178,8 +178,8 @@ bool string() {
 bool number() {
     bool success = false;
     enter("number");
-    expect('-');
-    if (expect('0')) {
+    expecti('-');
+    if (expecti('0')) {
         success = true;
     } else if (nonzero()) {
         while (digit());
@@ -188,15 +188,15 @@ bool number() {
         success = false;
     }
     if (success) {
-        if (expect('.')) {
+        if (expecti('.')) {
             if (digit()) {
                 while(digit());
             } else {
                 error("number() expected an integer after '.'");
             }
         }
-        if (expect('e') || expect('E')) {
-            if (expect('+') || expect('-'));
+        if (expecti('e') || expecti('E')) {
+            if (expecti('+') || expecti('-'));
             if (digit()) {
                 while (digit());
             } else {
@@ -230,7 +230,7 @@ bool nodquoteslash() {
 bool escaped() {
     bool success = false;
     enter("escaped");
-    if (expect('\\')) {
+    if (expecti('\\')) {
         if (
                 expect('"')     ||
                 expect('\\')    ||
@@ -245,7 +245,7 @@ bool escaped() {
         } else if (expect('u')) {
             int count = 4;
             while (iswxdigit(next) && --count) {
-                scan();
+                scani();
             }
 
             if (count) {
@@ -267,7 +267,7 @@ bool nonzero() {
     bool success = false;
     enter("nonzero");
     if (iswdigit(next) && next != '0') {
-        scan();
+        scani();
         success = true;
     }
     leave("nonzero");
@@ -283,7 +283,7 @@ bool digit() {
     enter("digit");
     if (iswdigit(next)) {
         success = true;
-        scan();
+        scani();
     }
     leave("digit");
 
@@ -296,8 +296,8 @@ bool digit() {
 bool _true() {
     int success = false;
     enter("true");
-    if (expect('t')) {
-        if (expect('r') && expect('u') && expect('e')) {
+    if (expecti('t')) {
+        if (expecti('r') && expecti('u') && expecti('e')) {
             success = true;
         } else {
             error("true() unexpected token");
@@ -314,8 +314,8 @@ bool _true() {
 bool _false() {
     int success = false;
     enter("false");
-    if (expect('f')) {
-        if (expect('a') && expect('l') && expect('s') && expect('e')) {
+    if (expecti('f')) {
+        if (expecti('a') && expecti('l') && expecti('s') && expecti('e')) {
             success = true;
         } else {
             error("false() unexpected token");
@@ -332,8 +332,8 @@ bool _false() {
 bool _null() {
     int success = false;
     enter("null");
-    if (expect('n')) {
-        if (expect('u') && expect('l') && expect('l')) {
+    if (expecti('n')) {
+        if (expecti('u') && expecti('l') && expecti('l')) {
             success = true;
         } else {
             error("null() unexpected token");

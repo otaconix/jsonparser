@@ -22,6 +22,15 @@ bool noexpect(wchar_t *c) {
     return success;
 }
 
+bool expecti(wchar_t c) {
+    bool success = false;
+
+    if ((success = next == c))
+        scani();
+
+    return success;
+}
+
 bool expect(wchar_t c) {
     bool success = false;
 
@@ -33,13 +42,19 @@ bool expect(wchar_t c) {
 
 void scan() {
     if (next != WEOF) {
+        next = getwchar();
+        col++;
+        if (iswspace(next) && !iswblank(next)) {
+            col = 0;
+            row++;
+        }
+    }
+}
+
+void scani() {
+    if (next != WEOF) {
         do {
-            next = getwchar();
-            col++;
-            if (iswspace(next) && !iswblank(next)) {
-                col = 0;
-                row++;
-            }
+            scan();
         } while (next != WEOF && iswspace(next));
     }
 }
